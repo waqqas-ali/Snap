@@ -9,13 +9,21 @@ import {
   Animated,
   Alert,
   ScrollView,
+  PixelRatio,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
 
-const { width, height } = Dimensions.get('window');
+// Get screen dimensions
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// Scaling functions for responsive sizes
+const scale = (size) => (SCREEN_WIDTH / 375) * size;
+const verticalScale = (size) => (SCREEN_HEIGHT / 812) * size;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
+const fontScale = PixelRatio.getFontScale();
 
 const FloatingBubble = ({ style, delay }) => {
   const anim = new Animated.Value(0);
@@ -46,7 +54,7 @@ const FloatingBubble = ({ style, delay }) => {
         {
           opacity: anim.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.8] }),
           transform: [
-            { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [0, -60] }) },
+            { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [0, -verticalScale(60)] }) },
             { scale: anim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.2] }) },
           ],
         },
@@ -99,8 +107,6 @@ const HomeScreen = () => {
   const takePhoto = async () => {
     try {
       const { status } = await ImagePicker.getCameraPermissionsAsync();
-      console.log('Camera permission status:', status);
-
       if (status !== 'granted') {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         if (!permissionResult.granted) {
@@ -113,19 +119,14 @@ const HomeScreen = () => {
         }
       }
 
-      console.log('Attempting to launch camera...');
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
       });
 
-      console.log('Camera result:', result);
-
       if (!result.canceled) {
         setSelectedImage(result.assets[0].uri);
-      } else {
-        console.log('Camera action was canceled');
       }
     } catch (error) {
       console.error('Error launching camera:', error);
@@ -136,8 +137,6 @@ const HomeScreen = () => {
   const retakePhoto = async () => {
     try {
       const { status } = await ImagePicker.getCameraPermissionsAsync();
-      console.log('Camera permission status for retake:', status);
-
       if (status !== 'granted') {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         if (!permissionResult.granted) {
@@ -150,19 +149,14 @@ const HomeScreen = () => {
         }
       }
 
-      console.log('Attempting to launch camera for retake...');
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
       });
 
-      console.log('Retake camera result:', result);
-
       if (!result.canceled) {
         setSelectedImage(result.assets[0].uri);
-      } else {
-        console.log('Retake camera action was canceled');
       }
     } catch (error) {
       console.error('Error retaking photo:', error);
@@ -200,7 +194,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-      colors={['#0F172A', '#1E1B4B', '#4C1D95']}
+        colors={['#0F172A', '#1E1B4B', '#4C1D95']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -225,9 +219,6 @@ const HomeScreen = () => {
               styles.title,
               {
                 transform: [{ scale: pulseAnim }],
-                textShadowColor: 'rgba(139, 92, 246, 0.8)',
-                textShadowOffset: { width: 0, height: 4 },
-                textShadowRadius: 15,
               },
             ]}
           >
@@ -235,7 +226,11 @@ const HomeScreen = () => {
           </Animated.Text>
           <Text style={styles.subtitle}>Discover • Analyze • Learn</Text>
         </Animated.View>
-        <ScrollView showsVerticalScrollIndicator={false}>
+
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           {selectedImage ? (
             <Animated.View
               style={[
@@ -252,35 +247,39 @@ const HomeScreen = () => {
                   style={styles.selectedImageContainer}
                 >
                   <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-                    <FontAwesome5 name="image" size={85} color="#E879F9" />
+                    <FontAwesome5 name="image" size={moderateScale(85)} color="#E879F9" />
                   </Animated.View>
                   <Text style={styles.selectedImageText}>Ready to Analyze</Text>
                 </LinearGradient>
 
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
-                    style={[styles.actionButton, { width: '48%' }]}
+                    style={[styles.actionButton]}
                     onPress={() => setSelectedImage(null)}
                   >
                     <LinearGradient
                       colors={['#8B5CF6', '#7C3AED']}
                       style={[styles.buttonGradient, styles.buttonShadow]}
                     >
-                      <FontAwesome5 name="redo-alt" size={22} color="#fff" />
-                      <Text style={styles.actionButtonText}>New Image</Text>
+                      <View style={styles.buttonContent}>
+                        <FontAwesome5 name="redo-alt" size={moderateScale(20)} color="#fff" />
+                        <Text style={styles.actionButtonText}>New Image</Text>
+                      </View>
                     </LinearGradient>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.actionButton, { width: '48%' }]}
+                    style={[styles.actionButton]}
                     onPress={retakePhoto}
                   >
                     <LinearGradient
                       colors={['#A855F7', '#9333EA']}
                       style={[styles.buttonGradient, styles.buttonShadow]}
                     >
-                      <FontAwesome5 name="camera" size={22} color="#fff" />
-                      <Text style={styles.actionButtonText}>Retake Image</Text>
+                      <View style={styles.buttonContent}>
+                        <FontAwesome5 name="camera" size={moderateScale(20)} color="#fff" />
+                        <Text style={styles.actionButtonText}>Retake Image</Text>
+                      </View>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
@@ -307,7 +306,7 @@ const HomeScreen = () => {
                   style={styles.optionGradient}
                 >
                   <Animated.View style={[styles.iconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                    <FontAwesome5 name="camera" size={30} color="#fff" />
+                    <FontAwesome5 name="camera" size={moderateScale(20)} color="#fff" />
                   </Animated.View>
                   <Text style={styles.optionTitle}>Take a Photo</Text>
                   <Text style={styles.optionSubtitle}>Instant capture & analysis</Text>
@@ -343,7 +342,7 @@ const HomeScreen = () => {
                   style={styles.optionGradient}
                 >
                   <Animated.View style={[styles.iconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                    <FontAwesome5 name="images" size={30} color="#fff" />
+                    <FontAwesome5 name="images" size={moderateScale(20)} color="#fff" />
                   </Animated.View>
                   <Text style={styles.optionTitle}>Choose from Gallery</Text>
                   <Text style={styles.optionSubtitle}>Select existing photos</Text>
@@ -379,7 +378,7 @@ const HomeScreen = () => {
                   style={styles.optionGradient}
                 >
                   <Animated.View style={[styles.iconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                    <FontAwesome5 name="upload" size={30} color="#fff" />
+                    <FontAwesome5 name="upload" size={moderateScale(20)} color="#fff" />
                   </Animated.View>
                   <Text style={styles.optionTitle}>Upload</Text>
                   <Text style={styles.optionSubtitle}>Add your image</Text>
@@ -394,128 +393,205 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  gradient: { flex: 1, padding: 20 },
-  backgroundElements: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
-  bubble: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradient: {
+    flex: 1,
+    width: '100%',
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(20),
+  },
+  backgroundElements: {
+    ...StyleSheet.absoluteFillObject,
     overflow: 'hidden',
   },
-  bubbleGradient: { flex: 1 },
-  bubble1: { top: '10%', left: '15%' },
-  bubble2: { top: '60%', right: '20%' },
-  bubble3: { bottom: '15%', left: '70%' },
+  bubble: {
+    position: 'absolute',
+    width: scale(80),
+    height: scale(80),
+    borderRadius: scale(40),
+    overflow: 'hidden',
+  },
+  bubbleGradient: {
+    flex: 1,
+  },
+  bubble1: {
+    top: '10%',
+    left: '15%',
+  },
+  bubble2: {
+    top: '60%',
+    right: '20%',
+  },
+  bubble3: {
+    bottom: '15%',
+    left: '70%',
+  },
   headerContainer: {
     alignItems: 'center',
-    marginTop: height * 0.06,
-    marginBottom: height * 0.07,
+    marginTop: verticalScale(48),
+    marginBottom: verticalScale(56),
   },
   title: {
-    fontSize: Math.min(52, width * 0.13),
+    fontSize: moderateScale(52),
     fontWeight: '900',
     color: '#fff',
-    letterSpacing: 2,
-    textShadowColor: 'rgba(219, 39, 119, 0.6)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 12,
+    letterSpacing: scale(2),
+    textShadowColor: 'rgba(139, 92, 246, 0.8)',
+    textShadowOffset: { width: 0, height: scale(4) },
+    textShadowRadius: scale(15),
   },
   subtitle: {
-    fontSize: Math.min(20, width * 0.05),
+    fontSize: moderateScale(20),
     color: 'rgba(255,255,255,0.9)',
-    marginTop: height * 0.015,
+    marginTop: verticalScale(12),
     fontWeight: '500',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: verticalScale(20),
   },
   optionsContainer: {
     width: '100%',
     alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: width * 0.05,
+    paddingHorizontal: scale(20),
   },
   optionCard: {
-    width: Math.min(width * 0.9, 400),
-    height: Math.min(height * 0.2, 150),
-    borderRadius: Math.min(28, width * 0.07),
+    width: '90%',
+    maxWidth: scale(400),
+    height: verticalScale(150),
+    borderRadius: moderateScale(28),
     overflow: 'hidden',
-    marginVertical: height * 0.030,
+    marginVertical: verticalScale(24),
   },
-  optionGradient: { flex: 1, padding: 25, alignItems: 'center', justifyContent: 'center' },
+  optionGradient: {
+    flex: 1,
+    padding: moderateScale(25),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   iconCircle: {
-    width: Math.min(65, width * 0.16),
-    height: Math.min(65, width * 0.16),
-    borderRadius: Math.min(32.5, width * 0.08),
+    width: moderateScale(50), // Reduced from 65
+    height: moderateScale(50), // Reduced from 65
+    borderRadius: moderateScale(25), // Adjusted to match new size
     backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: height * 0.02,
-    borderWidth: 2,
+    marginBottom: verticalScale(12), // Reduced margin
+    borderWidth: scale(2),
     borderColor: 'rgba(255,255,255,0.3)',
   },
   optionTitle: {
-    fontSize: Math.min(24, width * 0.06),
+    fontSize: moderateScale(18), // Reduced from 24
     fontWeight: '800',
     color: '#fff',
-    marginBottom: height * 0.008,
+    marginBottom: verticalScale(4), // Reduced margin
   },
   optionSubtitle: {
-    fontSize: Math.min(16, width * 0.04),
+    fontSize: moderateScale(12), // Reduced from 16
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '500',
   },
-  dividerContainer: { flexDirection: 'row', alignItems: 'center', width: '85%', marginVertical: 25 },
-  dividerGradient: { flex: 1, height: 2 },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '85%',
+    marginVertical: verticalScale(20),
+  },
+  dividerGradient: {
+    flex: 1,
+    height: scale(2),
+  },
   dividerCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 15,
+    marginHorizontal: scale(15),
   },
-  dividerText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  dividerText: {
+    color: '#fff',
+    fontSize: moderateScale(16),
+    fontWeight: '700',
+  },
+  imageContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
   glassCard: {
     backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: Math.min(25, width * 0.06),
-    padding: width * 0.06,
+    borderRadius: moderateScale(25),
+    padding: scale(24),
     alignItems: 'center',
-    width: Math.min(width * 0.9, 400),
-    borderWidth: 1,
+    width: '90%',
+    maxWidth: scale(400),
+    borderWidth: scale(1),
     borderColor: 'rgba(219, 39, 119, 0.2)',
   },
   selectedImageContainer: {
     width: '100%',
-    height: width * 0.65,
-    borderRadius: Math.min(20, width * 0.05),
+    height: scale(260),
+    borderRadius: moderateScale(20),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: height * 0.03,
+    marginBottom: verticalScale(24),
   },
   selectedImageText: {
     color: '#fff',
-    fontSize: Math.min(22, width * 0.055),
-    marginTop: height * 0.025,
+    fontSize: moderateScale(22),
+    marginTop: verticalScale(20),
     fontWeight: '600',
   },
-  buttonContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between' },
-  actionButton: { width: '48%', borderRadius: 15, overflow: 'hidden' },
-  buttonGradient: { padding: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
-  actionButtonText: { color: '#fff', fontSize: 16, fontWeight: '600', marginLeft: 8 },
+  buttonContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: scale(8),
+  },
+  actionButton: {
+    flex: 1,
+    minWidth: '48%',
+    borderRadius: scale(15),
+    overflow: 'hidden',
+  },
+  buttonGradient: {
+    paddingVertical: moderateScale(12),
+    paddingHorizontal: moderateScale(16),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: scale(8),
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    textAlign: 'center',
+  },
   cardShadow: {
     shadowColor: '#8B5CF6',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: scale(8) },
     shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowRadius: scale(12),
+    elevation: moderateScale(10),
   },
   buttonShadow: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: scale(4) },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: scale(8),
+    elevation: moderateScale(5),
   },
 });
 

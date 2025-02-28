@@ -10,11 +10,11 @@ import {
   Animated,
   ScrollView,
   Easing,
+  StatusBar
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { StatusBar } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -123,7 +123,7 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
       <LinearGradient
         colors={['#0F172A', '#1E1B4B', '#4C1D95']}
         start={{ x: 0, y: 0 }}
