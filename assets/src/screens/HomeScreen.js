@@ -16,10 +16,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
 
-// Get screen dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Scaling functions for responsive sizes
 const scale = (size) => (SCREEN_WIDTH / 375) * size;
 const verticalScale = (size) => (SCREEN_HEIGHT / 812) * size;
 const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
@@ -476,24 +474,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconCircle: {
-    width: moderateScale(50), // Reduced from 65
-    height: moderateScale(50), // Reduced from 65
-    borderRadius: moderateScale(25), // Adjusted to match new size
+    width: moderateScale(50), 
+    height: moderateScale(50), 
+    borderRadius: moderateScale(25), 
     backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: verticalScale(12), // Reduced margin
+    marginBottom: verticalScale(12),
     borderWidth: scale(2),
     borderColor: 'rgba(255,255,255,0.3)',
   },
   optionTitle: {
-    fontSize: moderateScale(18), // Reduced from 24
+    fontSize: moderateScale(18), 
     fontWeight: '800',
     color: '#fff',
-    marginBottom: verticalScale(4), // Reduced margin
+    marginBottom: verticalScale(4), 
   },
   optionSubtitle: {
-    fontSize: moderateScale(12), // Reduced from 16
+    fontSize: moderateScale(12), 
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '500',
   },
