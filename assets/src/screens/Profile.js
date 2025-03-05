@@ -1,153 +1,139 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 
 const Profile = () => {
   return (
-    <ScrollView style={styles.container}>
-      {/* Header Section */}
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Profile Header */}
       <View style={styles.header}>
-        <Image 
-          source={{ uri: 'https://via.placeholder.com/150' }}
+        <Image
+          source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }}
           style={styles.avatar}
         />
         <Text style={styles.name}>John Doe</Text>
-        <Text style={styles.bio}>Software Developer | React Native Enthusiast</Text>
+        <Text style={styles.subtitle}>Software Developer</Text>
       </View>
 
-      {/* Stats Section */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>256</Text>
-          <Text style={styles.statLabel}>Posts</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>12.4k</Text>
-          <Text style={styles.statLabel}>Followers</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>348</Text>
-          <Text style={styles.statLabel}>Following</Text>
+      {/* Profile Details Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>About Me</Text>
+        <Text style={styles.sectionContent}>
+          Passionate about building scalable applications and solving real-world problems.
+          Experienced in React Native, JavaScript, and backend technologies.
+        </Text>
+      </View>
+
+      {/* Contact Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Contact Information</Text>
+        <View style={styles.contactInfo}>
+          <Text style={styles.contactItem}>Email: john.doe@example.com</Text>
+          <Text style={styles.contactItem}>Phone: +1 (234) 567-890</Text>
+          <Text style={styles.contactItem}>Location: New York, USA</Text>
         </View>
       </View>
 
       {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.editButton}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => console.log('Edit Profile')}>
           <Text style={styles.buttonText}>Edit Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Text style={styles.buttonText}>Settings</Text>
+        <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={() => console.log('Logout')}>
+          <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
-      {/* About Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <Text style={styles.sectionContent}>
-          Passionate developer creating amazing mobile experiences. Love to code and explore new technologies.
-        </Text>
-      </View>
-
-      {/* Contact Info */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Contact</Text>
-        <Text style={styles.contactInfo}>📧 john.doe@example.com</Text>
-        <Text style={styles.contactInfo}>🌍 www.johndoe.dev</Text>
-        <Text style={styles.contactInfo}>📍 San Francisco, CA</Text>
-      </View>
+      {/* Footer */}
+      <Text style={styles.footer}>© 2023 My App. All rights reserved.</Text>
     </ScrollView>
-  )
-}
+  );
+};
 
+// Styles
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    paddingTop : 100,
+    flexGrow: 1,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     alignItems: 'center',
-    paddingVertical: 30,
-    backgroundColor: '#f8f9fa',
+    marginBottom: 20,
   },
   avatar: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
-  bio: {
+  subtitle: {
     fontSize: 16,
     color: '#666',
-    marginTop: 5,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  statLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 5,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 20,
-  },
-  editButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-  },
-  settingsButton: {
-    backgroundColor: '#6c757d',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   section: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 10,
+    color: '#333',
   },
   sectionContent: {
-    fontSize: 16,
-    color: '#666',
-    lineHeight: 24,
+    fontSize: 14,
+    color: '#555',
   },
   contactInfo: {
-    fontSize: 16,
-    color: '#666',
-    marginVertical: 5,
+    marginTop: 10,
   },
-})
+  contactItem: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  editButton: {
+    backgroundColor: '#007bff',
+  },
+  logoutButton: {
+    backgroundColor: '#dc3545',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  footer: {
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+});
 
-export default Profile
+export default Profile;
