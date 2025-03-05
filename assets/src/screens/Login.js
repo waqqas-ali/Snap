@@ -130,7 +130,7 @@ const Login = ({ navigation }) => {
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* <ScrollView contentContainerStyle={styles.scrollContent}> */}
 
           <FloatingParticle style={styles.particle1} delay={0} />
           <FloatingParticle style={styles.particle2} delay={500} />
@@ -266,7 +266,7 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </Animated.View>
           </SafeAreaView>
-        </ScrollView>
+        {/* </ScrollView> */}
       </LinearGradient>
     </View>
   );
