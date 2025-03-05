@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -132,6 +133,16 @@ const HomeScreen = () => {
     }
   };
 
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({});
+      if (result.type === 'success') {
+        console.log('Picked document:', result.uri);
+      }
+    } catch (error) {
+      console.log('Document picking error:', error);
+    }
+  };
   const retakePhoto = async () => {
     try {
       const { status } = await ImagePicker.getCameraPermissionsAsync();
@@ -367,7 +378,7 @@ const HomeScreen = () => {
 
               <TouchableOpacity
                 style={[styles.optionCard, styles.cardShadow]}
-                onPress={pickImage}
+                onPress={pickDocument}
               >
                 <LinearGradient
                   colors={['#A855F7', '#9333EA']}
@@ -452,7 +463,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: verticalScale(20),
+    paddingBottom: verticalScale(100),
   },
   optionsContainer: {
     width: '100%',

@@ -118,7 +118,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = () => {
     console.log('Login attempted with:', email, password);
-    navigation.navigate('Home');
+    navigation.navigate('App');
   };
 
   return (
